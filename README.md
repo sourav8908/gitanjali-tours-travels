@@ -77,4 +77,8 @@ Uses the free public OSRM router (no API key). If it's unreachable, the calculat
 
 ## Deployment
 
+**Live site:** https://sourav8908.github.io/gitanjali-tours-travels/
+
+Every push to `main` builds and publishes the site automatically via GitHub Actions (`.github/workflows/deploy.yml`). Check progress in the repo's **Actions** tab. To move to a custom domain, add it under **Settings → Pages**, delete the `BASE_PATH` line in the workflow, and update the domain in `index.html`, `public/robots.txt` and `public/sitemap.xml`.
+
 See [DEPLOYMENT.md](DEPLOYMENT.md) for Vercel, Netlify and GitHub Pages, custom domain DNS and HTTPS. Before going live, replace `gitanjalitravels.example.com` in `index.html`, `public/robots.txt` and `public/sitemap.xml` with your real domain, and replace the sample phone number and address in `src/data/companyInfo.ts` and in the JSON-LD block of `index.html`.
