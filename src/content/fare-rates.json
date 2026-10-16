@@ -1,4 +1,11 @@
 {
+  "modes": {
+    "perKm": true,
+    "perHour": true,
+    "package": true
+  },
+  "defaultMode": "perKm",
+  "stopWaitMinutes": 30,
   "longTripThresholdKm": 150,
   "defaultCategory": "Premium MPV",
   "rates": [
@@ -8,7 +15,15 @@
       "modelExample": "Maruti Suzuki Dzire",
       "ratePerKm": 14,
       "minBillableKm": 40,
-      "longTripAllowance": 350
+      "longTripAllowance": 350,
+      "ratePerHour": 250,
+      "minHours": 4,
+      "kmPerHour": 10,
+      "packageHours": 8,
+      "packageKm": 80,
+      "packagePrice": 2000,
+      "extraKmRate": 14,
+      "extraHourRate": 150
     },
     {
       "category": "MPV",
@@ -16,7 +31,15 @@
       "modelExample": "Maruti Suzuki Ertiga",
       "ratePerKm": 16,
       "minBillableKm": 50,
-      "longTripAllowance": 350
+      "longTripAllowance": 350,
+      "ratePerHour": 300,
+      "minHours": 4,
+      "kmPerHour": 10,
+      "packageHours": 8,
+      "packageKm": 80,
+      "packagePrice": 2400,
+      "extraKmRate": 16,
+      "extraHourRate": 180
     },
     {
       "category": "Premium MPV",
@@ -24,7 +47,15 @@
       "modelExample": "Toyota Innova Crysta (5602 Signature)",
       "ratePerKm": 19,
       "minBillableKm": 50,
-      "longTripAllowance": 400
+      "longTripAllowance": 400,
+      "ratePerHour": 380,
+      "minHours": 4,
+      "kmPerHour": 10,
+      "packageHours": 8,
+      "packageKm": 80,
+      "packagePrice": 3000,
+      "extraKmRate": 19,
+      "extraHourRate": 220
     },
     {
       "category": "Tourist Van",
@@ -32,7 +63,15 @@
       "modelExample": "Force Tempo Traveller",
       "ratePerKm": 26,
       "minBillableKm": 80,
-      "longTripAllowance": 500
+      "longTripAllowance": 500,
+      "ratePerHour": 550,
+      "minHours": 4,
+      "kmPerHour": 10,
+      "packageHours": 8,
+      "packageKm": 80,
+      "packagePrice": 4200,
+      "extraKmRate": 26,
+      "extraHourRate": 300
     }
   ]
 }

@@ -9,7 +9,7 @@ import { ObjectForm } from './fields';
 import { friendlyMessage, getPath, setPath, type FieldDef } from './paths';
 import { ListEditor, type Item } from './ListEditor';
 import type { Block, SectionDef } from './sections';
-import { Badge, Card } from './ui';
+import { Badge, Card, PageHeader } from './ui';
 import { btn } from './styles';
 
 interface SectionEditorProps {
@@ -124,28 +124,43 @@ export const SectionEditor: React.FC<SectionEditorProps> = ({ def, onDirtyChange
     );
     return (
       <Card key={i} title={block.title} description={block.description}>
-        <ObjectForm fields={block.fields} value={draft} onChange={setDraft} errors={errors} />
+        <ObjectForm
+          fields={block.fields}
+          value={draft}
+          onChange={(next) => {
+            // Clear messages for fields the user has just changed
+            setProblems((ps) => ps.filter((p) => p.fieldKey === undefined || JSON.stringify(getPath(next, p.fieldKey)) === JSON.stringify(getPath(draft, p.fieldKey))));
+            setDraft(next);
+          }}
+          errors={errors}
+        />
       </Card>
     );
   };
 
   return (
-    <div className="space-y-6">
-      {/* Save bar */}
-      <div className="sticky top-0 z-20 -mx-4 sm:-mx-8 px-4 sm:px-8 py-3 bg-brand-surface/95 backdrop-blur border-b border-slate-200 flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-2 mr-auto">
-          {dirty ? <Badge tone="amber">Unsaved changes</Badge> : isEdited ? <Badge tone="blue">Edited in this browser</Badge> : <Badge>Published version</Badge>}
-        </div>
-        {isEdited && !dirty && (
-          <button type="button" className={btn.ghost} onClick={resetToPublished}>
-            <RotateCcw className="w-4 h-4" /> Reset to published
-          </button>
-        )}
-        {dirty && <button type="button" className={btn.ghost} onClick={discard}>Discard changes</button>}
-        <button type="button" className={btn.primary} onClick={save} disabled={!dirty}>
-          <Save className="w-4 h-4" /> Save changes
-        </button>
-      </div>
+    <div className="space-y-6 pb-24">
+      <PageHeader
+        eyebrow={def.group}
+        title={def.label}
+        description={def.description}
+        aside={
+          <div className="flex items-center gap-2">
+            {dirty ? (
+              <Badge tone="amber" dot>Unsaved changes</Badge>
+            ) : isEdited ? (
+              <Badge tone="gold" dot>Edited in this browser</Badge>
+            ) : (
+              <Badge dot>Published version</Badge>
+            )}
+            {isEdited && !dirty && (
+              <button type="button" className={btn.secondary} onClick={resetToPublished}>
+                <RotateCcw className="w-4 h-4" /> Reset
+              </button>
+            )}
+          </div>
+        }
+      />
 
       {problems.length > 0 && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-brand-lg" role="alert">
@@ -159,6 +174,28 @@ export const SectionEditor: React.FC<SectionEditorProps> = ({ def, onDirtyChange
       )}
 
       {def.blocks.map(renderBlock)}
+
+      {/* Save bar: appears while there are unsaved changes */}
+      <div
+        className={`fixed bottom-5 left-1/2 lg:left-[calc(50%+8rem)] -translate-x-1/2 z-30 w-[calc(100%-2rem)] max-w-xl transition-all duration-300 ${
+          dirty ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6 pointer-events-none'
+        }`}
+        aria-hidden={!dirty}
+      >
+        <div className="flex items-center gap-3 pl-5 pr-2 py-2 bg-brand-navy text-white rounded-full shadow-2xl ring-1 ring-white/10">
+          <span className="flex items-center gap-2 text-sm font-semibold mr-auto">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" /> Unsaved changes
+          </span>
+          <button type="button" onClick={discard} tabIndex={dirty ? 0 : -1}
+            className="px-3.5 py-2 text-sm font-semibold text-slate-300 hover:text-white rounded-full">
+            Discard
+          </button>
+          <button type="button" onClick={save} tabIndex={dirty ? 0 : -1}
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-brand-navy bg-brand-gold hover:bg-brand-gold-dark hover:text-white rounded-full transition-colors">
+            <Save className="w-4 h-4" /> Save changes
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

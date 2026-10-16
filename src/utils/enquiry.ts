@@ -13,8 +13,13 @@ export interface EnquiryParams {
   travelDate?: string;
   passengers?: string | number;
   pickup?: string;
+  /** Stops on the way, in order. */
+  stops?: string[];
   destination?: string;
+  roundTrip?: boolean;
   distanceKm?: number;
+  /** e.g. "Per hour (6 hr)" */
+  pricing?: string;
   estimatedFare?: number;
   customerName?: string;
   customerPhone?: string;
@@ -38,8 +43,11 @@ export function buildEnquiryMessage(params: EnquiryParams, bold = true): string 
     ['Travel Date', params.travelDate],
     ['Passengers', params.passengers],
     ['Pickup Location', params.pickup],
+    ['Stops on the Way', params.stops?.length ? params.stops.map((s, i) => `${i + 1}. ${s}`).join(', ') : undefined],
     ['Destination', params.destination],
+    ['Trip Type', params.roundTrip === undefined ? undefined : params.roundTrip ? 'Round trip (return to pickup)' : 'One way'],
     ['Estimated Distance', params.distanceKm ? `${params.distanceKm} km` : undefined],
+    ['Pricing Option', params.pricing],
     ['Estimated Fare', params.estimatedFare ? `₹${params.estimatedFare.toLocaleString('en-IN')}` : undefined],
     ['Additional Requirements', params.message],
   ];

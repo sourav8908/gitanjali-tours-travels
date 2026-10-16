@@ -30,7 +30,7 @@ Content lives in JSON files in `src/content/`, which are published with the site
 | Offers | `offers.json` |
 | Destination gallery and hero slideshow | `destinations.json` |
 | Customer reviews | `testimonials.json` |
-| Calculator fare rates and locations | `fare-rates.json`, `locations.json` |
+| Trip Planner pricing options, per-vehicle rates, and locations | `fare-rates.json`, `locations.json` |
 | Photo attributions | `photo-credits.json` |
 
 Vehicles, tours, tariff cards, offers and destinations each have an optional `hidden` flag. The homepage stats, filter options, nav links and the contact form's vehicle list are generated from this content.
@@ -86,9 +86,11 @@ public/
   robots.txt, sitemap.xml, favicon.svg
 ```
 
-## Distance calculator
+## Trip planner
 
-Uses the free public OSRM router (no API key). If it's unreachable, the calculator falls back to an approximate straight-line distance, shows a "~" and a note, and draws a dashed line on the map.
+The `#calculator` section (`src/components/home/DistanceMap.tsx`) lets customers build a route (start, any stops, destination, optional return to start). The whole route goes to the free public OSRM router in one request (no API key) and comes back with per-leg distances. If OSRM is unreachable it falls back to straight-line estimates, marked "~" with a dashed line on the map (`src/utils/routing.ts`).
+
+Fares come from `src/utils/fares.ts` using `fare-rates.json`, with three pricing options the admin can switch on or off: per km, per hour (with a km allowance per hour), and an hours + km package. The enquiry button sends the full itinerary and chosen pricing to WhatsApp.
 
 ## Deployment
 

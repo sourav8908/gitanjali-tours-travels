@@ -71,7 +71,7 @@ export const ImageField: React.FC<ImageFieldProps> = ({ value, onChange, optiona
   return (
     <div className="space-y-3">
       <div className="flex flex-col sm:flex-row gap-4 sm:items-center">
-        <div className="w-full sm:w-48 aspect-[16/10] rounded-brand overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0">
+        <div className="w-full sm:w-48 aspect-[16/10] rounded-brand overflow-hidden bg-brand-ivory border border-brand-line flex items-center justify-center shrink-0">
           {value ? (
             <img src={asset(value)} alt="" className="w-full h-full object-cover" />
           ) : (
@@ -79,11 +79,11 @@ export const ImageField: React.FC<ImageFieldProps> = ({ value, onChange, optiona
           )}
         </div>
         <div className="flex flex-wrap gap-2">
-          <button type="button" className={btn.ghost} onClick={() => fileInput.current?.click()} disabled={busy}>
+          <button type="button" className={btn.secondary} onClick={() => fileInput.current?.click()} disabled={busy}>
             <Upload className="w-4 h-4" />
             {busy ? 'Processing…' : 'Upload photo'}
           </button>
-          <button type="button" className={btn.ghost} onClick={() => setShowPicker((s) => !s)}>
+          <button type="button" className={btn.secondary} onClick={() => setShowPicker((s) => !s)}>
             <Images className="w-4 h-4" />
             Choose from site
           </button>
@@ -103,14 +103,14 @@ export const ImageField: React.FC<ImageFieldProps> = ({ value, onChange, optiona
       {error && <p className="text-xs text-red-600" role="alert">{error}</p>}
 
       {showPicker && (
-        <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 p-3 bg-slate-50 rounded-brand border border-slate-200 max-h-64 overflow-y-auto">
+        <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 p-3 bg-brand-ivory rounded-brand border border-brand-line max-h-64 overflow-y-auto">
           {siteImages.map((src) => (
             <button
               key={src}
               type="button"
               onClick={() => { onChange(src); setShowPicker(false); }}
               className={`aspect-[4/3] rounded overflow-hidden border-2 transition-colors ${
-                src === value ? 'border-brand-ocean' : 'border-transparent hover:border-brand-gold'
+                src === value ? 'border-brand-gold ring-2 ring-brand-gold/30' : 'border-transparent hover:border-brand-gold'
               }`}
               aria-label={`Use ${src.split('/').pop()}`}
             >

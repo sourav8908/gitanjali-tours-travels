@@ -16,6 +16,7 @@ import type {
   pricingCategoryKeys,
   contentSchemas,
 } from '../content/schema';
+import type { pricingModes } from '../content/pricingModes';
 
 // Content types are inferred from src/content/schema.ts (type-only imports,
 // so zod is never bundled into the site).
@@ -35,6 +36,7 @@ export type Destination = z.infer<typeof destinationSchema>;
 export type Testimonial = z.infer<typeof testimonialSchema>;
 export type FareRatesContent = z.infer<typeof fareRatesSchema>;
 export type FareRate = FareRatesContent['rates'][number];
+export type PricingMode = (typeof pricingModes)[number];
 export type LocationsContent = z.infer<typeof locationsSchema>;
 export type RouteCoordinate = LocationsContent['locations'][number];
 export type PhotoCredit = z.infer<typeof photoCreditSchema>;
@@ -65,22 +67,19 @@ export interface EnquiryFormState {
   message: string;
 }
 
-export interface FareEstimate {
-  category: string;
-  vehicleName: string;
-  modelExample: string;
-  estimatedFare: number;
-  ratePerKm: number;
-  baseKm: number;
-}
-
-export interface RouteResult {
+export interface RouteLeg {
   from: string;
   to: string;
   distanceKm: number;
   durationMinutes: number;
+}
+
+export interface RouteResult {
+  /** One leg per hop between consecutive trip points. */
+  legs: RouteLeg[];
+  distanceKm: number;
+  durationMinutes: number;
   routeCoordinates: [number, number][];
-  estimatedFares: FareEstimate[];
   /** True when the live router was unavailable and a straight-line estimate was used. */
   isApproximate: boolean;
 }

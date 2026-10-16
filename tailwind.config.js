@@ -26,6 +26,8 @@ export default {
           // Odisha accents: Konark sandstone and a warm temple-ivory surface
           sandstone: '#A85A32',
           ivory: '#FBF7F0',
+          // Warm hairline for borders on ivory (admin)
+          line: '#ECE5D8',
         }
       },
       keyframes: {

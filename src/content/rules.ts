@@ -61,10 +61,21 @@ export const contentRules: Partial<Record<keyof typeof contentFileNames, Rule>> 
   },
 
   fareRates: (d) => {
-    const fares = d as { defaultCategory?: string; rates?: { category: string }[] };
+    const fares = d as {
+      defaultCategory?: string;
+      defaultMode?: string;
+      modes?: Record<string, boolean>;
+      rates?: { category: string }[];
+    };
+    const problems: string[] = [];
     if (fares?.rates?.length && !fares.rates.some((r) => r.category === fares.defaultCategory)) {
-      return [`"Pre-selected category" (${fares.defaultCategory}) doesn't match any rate's category name`];
+      problems.push(`"Pre-selected vehicle" (${fares.defaultCategory}) doesn't match any rate's category name`);
     }
-    return [];
+    if (fares?.modes && !Object.values(fares.modes).some(Boolean)) {
+      problems.push('Turn on at least one pricing option for customers');
+    } else if (fares?.modes && fares.defaultMode && !fares.modes[fares.defaultMode]) {
+      problems.push('The pre-selected pricing option is switched off; choose one that is on');
+    }
+    return problems;
   },
 };

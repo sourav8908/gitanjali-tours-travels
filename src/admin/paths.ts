@@ -20,7 +20,9 @@ export type FieldDef =
   | (BaseField & { type: 'boolean' })
   | (BaseField & { type: 'select'; options: Option[] | ((root: unknown) => Option[]) })
   | (BaseField & { type: 'image' })
-  | (BaseField & { type: 'lines'; itemLabel?: string });
+  | (BaseField & { type: 'lines'; itemLabel?: string })
+  /** A sub-heading that groups the fields after it (not a value; key must be unique, e.g. "_h-per-hour"). */
+  | (BaseField & { type: 'heading' });
 
 type AnyRecord = Record<string, unknown>;
 

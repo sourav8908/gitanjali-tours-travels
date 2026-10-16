@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { pricingModes } from './pricingModes.ts';
 
 /**
  * Shape of every piece of editable content.
@@ -186,16 +187,42 @@ export const testimonialSchema = z.object({
 
 // --------------------------------------------------------------- Calculator
 
+/**
+ * How a trip can be priced in the calculator:
+ *  - perKm:   max(distance, minBillableKm) × ratePerKm (+ driver allowance on long trips)
+ *  - perHour: max(hours, minHours) × ratePerHour, plus extraKmRate for km beyond kmPerHour × hours
+ *  - package: packagePrice for packageHours / packageKm, plus extra km and extra hours
+ */
+const money = z.number().nonnegative();
+
 export const fareRateSchema = z.object({
   category: text,
   vehicleName: text,
   modelExample: text,
+  // Per km
   ratePerKm: z.number().positive(),
   minBillableKm: z.number().nonnegative(),
-  longTripAllowance: z.number().nonnegative(),
+  longTripAllowance: money,
+  // Per hour
+  ratePerHour: z.number().positive(),
+  minHours: z.number().positive(),
+  /** Km included with each hour of hire; 0 = unlimited. */
+  kmPerHour: z.number().nonnegative(),
+  // Hours + km package
+  packageHours: z.number().positive(),
+  packageKm: z.number().positive(),
+  packagePrice: z.number().positive(),
+  /** Charged per km beyond what's included (per-hour and package). */
+  extraKmRate: money,
+  extraHourRate: money,
 });
 
 export const fareRatesSchema = z.object({
+  /** Which pricing options customers can choose in the calculator. */
+  modes: z.object({ perKm: z.boolean(), perHour: z.boolean(), package: z.boolean() }),
+  defaultMode: z.enum(pricingModes),
+  /** Waiting time added for each stop when estimating hours of hire. */
+  stopWaitMinutes: z.number().int().min(0).max(600),
   longTripThresholdKm: z.number().positive(),
   defaultCategory: text,
   rates: z.array(fareRateSchema).min(1, 'Add at least one rate'),

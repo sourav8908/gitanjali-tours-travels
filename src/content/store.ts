@@ -12,7 +12,7 @@ import { defaultContent } from './defaults';
  */
 
 /** Bump the version when the content shape changes, so stale demo edits are ignored. */
-export const STORAGE_KEY = 'gitanjali-tours:demo-content:v1';
+export const STORAGE_KEY = 'gitanjali-tours:demo-content:v2';
 
 const contentKeys = Object.keys(defaultContent) as ContentKey[];
 

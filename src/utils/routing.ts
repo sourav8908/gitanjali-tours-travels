@@ -1,12 +1,11 @@
-import type { RouteCoordinate, RouteResult } from '../types';
-import { fareRates, LONG_TRIP_THRESHOLD_KM } from '../data/fareRates';
+import type { RouteCoordinate, RouteLeg, RouteResult } from '../types';
 
-const OSRM_TIMEOUT_MS = 4000;
+const OSRM_TIMEOUT_MS = 6000;
 /** Straight-line to road distance multiplier for the Odisha highway network. */
 const ROAD_FACTOR = 1.25;
 /** Average highway speed (km/h) used when the router is unavailable. */
 const FALLBACK_AVG_SPEED_KMH = 52;
-const FALLBACK_MIN_DISTANCE_KM = 12;
+const FALLBACK_MIN_LEG_KM = 5;
 
 /**
  * Calculates approximate road distance using the Haversine formula (km)
@@ -25,86 +24,53 @@ export function calculateHaversineDistance(lat1: number, lon1: number, lat2: num
   return Math.round(R * c * ROAD_FACTOR);
 }
 
+const summarise = (legs: RouteLeg[], routeCoordinates: [number, number][], isApproximate: boolean): RouteResult => ({
+  legs,
+  distanceKm: legs.reduce((sum, l) => sum + l.distanceKm, 0),
+  durationMinutes: legs.reduce((sum, l) => sum + l.durationMinutes, 0),
+  routeCoordinates,
+  isApproximate,
+});
+
 /**
- * Fetches driving route from OSRM public API with fallback to Haversine
+ * Driving route through every point in order (start, stops…, destination,
+ * and back to start for a round trip), from the public OSRM router, with a
+ * straight-line fallback when it's unavailable.
  */
-export async function calculateRoute(
-  origin: RouteCoordinate,
-  destination: RouteCoordinate
-): Promise<RouteResult> {
+export async function calculateRoute(points: RouteCoordinate[]): Promise<RouteResult> {
   try {
-    const url = `https://router.project-osrm.org/route/v1/driving/${origin.lng},${origin.lat};${destination.lng},${destination.lat}?overview=full&geometries=geojson`;
+    const coords = points.map((p) => `${p.lng},${p.lat}`).join(';');
+    const url = `https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`;
     const response = await fetch(url, { signal: AbortSignal.timeout(OSRM_TIMEOUT_MS) });
 
     if (response.ok) {
       const data = await response.json();
-      if (data.routes && data.routes.length > 0) {
-        const route = data.routes[0];
-        const distanceKm = Math.round(route.distance / 1000);
-        const durationMinutes = Math.round(route.duration / 60);
-
+      const route = data.routes?.[0];
+      if (route?.legs?.length === points.length - 1) {
+        const legs: RouteLeg[] = route.legs.map((leg: { distance: number; duration: number }, i: number) => ({
+          from: points[i].name,
+          to: points[i + 1].name,
+          distanceKm: Math.round(leg.distance / 1000),
+          durationMinutes: Math.round(leg.duration / 60),
+        }));
         // Leaflet requires [lat, lng]
         const coordinates: [number, number][] = route.geometry.coordinates.map(
           (coord: [number, number]) => [coord[1], coord[0]]
         );
-
-        return createRouteResult(origin.name, destination.name, distanceKm, durationMinutes, coordinates, false);
+        return summarise(legs, coordinates, false);
       }
     }
   } catch {
-    // If external router is unavailable, fall back to highway calculations
+    // If the external router is unavailable, fall back to highway estimates
   }
 
-  // Graceful fallback
-  const distanceKm = Math.max(
-    FALLBACK_MIN_DISTANCE_KM,
-    calculateHaversineDistance(origin.lat, origin.lng, destination.lat, destination.lng)
-  );
-  const durationMinutes = Math.round((distanceKm / FALLBACK_AVG_SPEED_KMH) * 60);
-
-  // Interpolate intermediate line coordinates
-  const steps = 12;
-  const coordinates: [number, number][] = [];
-  for (let i = 0; i <= steps; i++) {
-    const factor = i / steps;
-    coordinates.push([
-      origin.lat + (destination.lat - origin.lat) * factor,
-      origin.lng + (destination.lng - origin.lng) * factor
-    ]);
-  }
-
-  return createRouteResult(origin.name, destination.name, distanceKm, durationMinutes, coordinates, true);
-}
-
-function createRouteResult(
-  from: string,
-  to: string,
-  distanceKm: number,
-  durationMinutes: number,
-  routeCoordinates: [number, number][],
-  isApproximate: boolean
-): RouteResult {
-  const isLongTrip = distanceKm > LONG_TRIP_THRESHOLD_KM;
-
-  const estimatedFares = fareRates.map((rate) => ({
-    category: rate.category,
-    vehicleName: rate.vehicleName,
-    modelExample: rate.modelExample,
-    ratePerKm: rate.ratePerKm,
-    baseKm: distanceKm,
-    estimatedFare: Math.round(
-      Math.max(distanceKm, rate.minBillableKm) * rate.ratePerKm +
-        (isLongTrip ? rate.longTripAllowance : 0)
-    )
-  }));
-
-  return {
-    from,
-    to,
-    distanceKm,
-    durationMinutes,
-    routeCoordinates,
-    estimatedFares,
-    isApproximate
-  };
+  const legs: RouteLeg[] = points.slice(1).map((to, i) => {
+    const from = points[i];
+    const same = from.lat === to.lat && from.lng === to.lng;
+    const distanceKm = same ? 0 : Math.max(FALLBACK_MIN_LEG_KM, calculateHaversineDistance(from.lat, from.lng, to.lat, to.lng));
+    return { from: from.name, to: to.name, distanceKm, durationMinutes: Math.round((distanceKm / FALLBACK_AVG_SPEED_KMH) * 60) };
+  });
+  // Straight segments between points
+  const coordinates: [number, number][] = points.map((p) => [p.lat, p.lng]);
+  return summarise(legs, coordinates, true);
 }
