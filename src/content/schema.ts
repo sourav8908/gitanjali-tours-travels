@@ -1,20 +1,27 @@
 import { z } from 'zod';
 
 /**
- * Shape of every editable content file in src/content/.
+ * Shape of every piece of editable content.
  *
- * This is the single source of truth: the TypeScript types in src/types are
- * inferred from these schemas, and `npm run validate` (run before every build
- * and deploy) checks the JSON files against them, so a bad edit in the admin
- * panel stops the deploy instead of breaking the live site.
+ * This is the single source of truth:
+ *  - the TypeScript types in src/types are inferred from these schemas,
+ *  - `npm run validate` checks the JSON files in src/content/ against them
+ *    before every build and deploy,
+ *  - the admin panel (src/admin) validates edits with them before saving.
  *
- * If you add a field here, add it to public/admin/config.yml too.
+ * If you add a field here, add it to the admin form in src/admin/sections.tsx too.
  */
 
 const text = z.string().trim().min(1, 'Required');
 const optionalText = z.string().trim().optional();
-/** Path to a file in public/, e.g. "/images/vehicles/innova-crysta.webp". */
-const imagePath = z.string().regex(/^\/images\/.+\.(webp|jpe?g|png|avif|svg)$/i, 'Must be an image under /images/');
+/**
+ * A photo: a file in public/ (e.g. "/images/vehicles/innova-crysta.webp"), or,
+ * for demo edits made in the admin, an uploaded image stored as a data URL.
+ */
+const imagePath = z.string().regex(
+  /^(\/images\/.+\.(webp|jpe?g|png|avif|svg)|data:image\/(webp|jpeg|png);base64,.+)$/i,
+  'Choose a photo'
+);
 const hidden = z.boolean().optional();
 
 // ----------------------------------------------------------------- Settings
@@ -116,22 +123,24 @@ export const tourSchema = z.object({
 
 export const pricingCategoryKeys = ['per-km', 'bhubaneswar-local', 'puri-konark', 'airport'] as const;
 
+export const pricingTabSchema = z.object({ key: z.enum(pricingCategoryKeys), label: text });
+
+export const pricingPlanSchema = z.object({
+  id: text,
+  categoryName: text,
+  categoryKey: z.enum(pricingCategoryKeys),
+  vehicleCategory: text,
+  vehicleModelExample: text,
+  basePrice: text,
+  unit: text,
+  additionalCharges: text,
+  terms: z.array(text),
+  hidden,
+});
+
 export const pricingSchema = z.object({
-  tabs: z.array(z.object({ key: z.enum(pricingCategoryKeys), label: text })).min(1),
-  plans: z.array(
-    z.object({
-      id: text,
-      categoryName: text,
-      categoryKey: z.enum(pricingCategoryKeys),
-      vehicleCategory: text,
-      vehicleModelExample: text,
-      basePrice: text,
-      unit: text,
-      additionalCharges: text,
-      terms: z.array(text),
-      hidden,
-    })
-  ),
+  tabs: z.array(pricingTabSchema).min(1, 'Add at least one tab'),
+  plans: z.array(pricingPlanSchema),
 });
 
 // ------------------------------------------------------------------- Offers
@@ -177,31 +186,33 @@ export const testimonialSchema = z.object({
 
 // --------------------------------------------------------------- Calculator
 
+export const fareRateSchema = z.object({
+  category: text,
+  vehicleName: text,
+  modelExample: text,
+  ratePerKm: z.number().positive(),
+  minBillableKm: z.number().nonnegative(),
+  longTripAllowance: z.number().nonnegative(),
+});
+
 export const fareRatesSchema = z.object({
   longTripThresholdKm: z.number().positive(),
   defaultCategory: text,
-  rates: z.array(
-    z.object({
-      category: text,
-      vehicleName: text,
-      modelExample: text,
-      ratePerKm: z.number().positive(),
-      minBillableKm: z.number().nonnegative(),
-      longTripAllowance: z.number().nonnegative(),
-    })
-  ).min(1),
+  rates: z.array(fareRateSchema).min(1, 'Add at least one rate'),
+});
+
+export const locationCategories = ['Odisha Core', 'Coastal', 'Heritage', 'Outstation'] as const;
+
+export const locationSchema = z.object({
+  name: text,
+  lat: z.number().min(-90).max(90),
+  lng: z.number().min(-180).max(180),
+  category: z.enum(locationCategories).optional(),
 });
 
 export const locationsSchema = z.object({
   mapCenter: z.object({ lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180) }),
-  locations: z.array(
-    z.object({
-      name: text,
-      lat: z.number().min(-90).max(90),
-      lng: z.number().min(-180).max(180),
-      category: z.enum(['Odisha Core', 'Coastal', 'Heritage', 'Outstation']).optional(),
-    })
-  ).min(2),
+  locations: z.array(locationSchema).min(2, 'Add at least two locations'),
 });
 
 // --------------------------------------------------------------------- Misc
@@ -217,18 +228,18 @@ export const photoCreditSchema = z.object({
   sourceUrl: z.url(),
 });
 
-/** Every content file and the schema it must match. */
-export const contentFiles = {
-  'settings.json': settingsSchema,
-  'company.json': companySchema,
-  'vehicles.json': z.array(vehicleSchema),
-  'tours.json': z.array(tourSchema),
-  'pricing.json': pricingSchema,
-  'offers.json': z.array(offerSchema),
-  'destinations.json': z.array(destinationSchema),
-  'testimonials.json': z.array(testimonialSchema),
-  'fare-rates.json': fareRatesSchema,
-  'locations.json': locationsSchema,
-  'services.json': servicesSchema,
-  'photo-credits.json': z.array(photoCreditSchema),
+/** Every piece of content and the schema it must match. */
+export const contentSchemas = {
+  settings: settingsSchema,
+  company: companySchema,
+  services: servicesSchema,
+  vehicles: z.array(vehicleSchema),
+  tours: z.array(tourSchema),
+  pricing: pricingSchema,
+  offers: z.array(offerSchema),
+  destinations: z.array(destinationSchema),
+  testimonials: z.array(testimonialSchema),
+  fareRates: fareRatesSchema,
+  locations: locationsSchema,
+  photoCredits: z.array(photoCreditSchema),
 } as const;

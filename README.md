@@ -8,7 +8,7 @@ Single-page, frontend-only website for **Gitanjali Tours & Travels**, Bhubaneswa
 
 ```bash
 npm install
-npm run dev       # local site at http://localhost:5173 (admin at /admin/index.html)
+npm run dev       # local site at http://localhost:5173 (admin at /admin/)
 npm run validate  # check the content files
 npm run build     # validate + type-check + production build in dist/
 npm run preview   # preview the production build
@@ -17,29 +17,33 @@ npm run lint
 
 ## Updating content
 
-**Use the admin panel**: https://sourav8908.github.io/gitanjali-tours-travels/admin/. See [ADMIN.md](ADMIN.md) for sign-in and everyday tasks. Each save commits to `main`, and the deploy workflow checks and publishes it in 1–2 minutes.
+Content lives in JSON files in `src/content/`, which are published with the site:
 
-The admin edits JSON files in `src/content/`, which you can also edit by hand:
+| Content | File |
+| --- | --- |
+| Section on/off switches | `settings.json` |
+| Phone, WhatsApp, email, address, hours, social/Google links, hero headline | `company.json` |
+| Services (footer and contact form) | `services.json` |
+| Vehicles | `vehicles.json` |
+| Tour packages | `tours.json` |
+| Tariff tabs and cards | `pricing.json` |
+| Offers | `offers.json` |
+| Destination gallery and hero slideshow | `destinations.json` |
+| Customer reviews | `testimonials.json` |
+| Calculator fare rates and locations | `fare-rates.json`, `locations.json` |
+| Photo attributions | `photo-credits.json` |
 
-| Content | File | Admin section |
-| --- | --- | --- |
-| Section on/off switches | `settings.json` | Site Settings → Page Sections |
-| Phone, WhatsApp, email, address, hours, social/Google links, hero headline | `company.json` | Site Settings → Business Details |
-| Services (footer and contact form) | `services.json` | Site Settings → Services List |
-| Vehicles | `vehicles.json` | Fleet |
-| Tour packages | `tours.json` | Tour Packages |
-| Tariff tabs and cards | `pricing.json` | Rates |
-| Offers | `offers.json` | Offers |
-| Destination gallery and hero slideshow | `destinations.json` | Destinations |
-| Customer reviews | `testimonials.json` | Reviews |
-| Calculator fare rates and locations | `fare-rates.json`, `locations.json` | Distance Calculator |
-| Photo attributions | `photo-credits.json` | Photo Credits |
+Vehicles, tours, tariff cards, offers and destinations each have an optional `hidden` flag. The homepage stats, filter options, nav links and the contact form's vehicle list are generated from this content.
 
-Vehicles, tours, tariff cards, offers and destinations each have a **Hide from website** switch. The homepage stats, filter options, nav links and the contact form's vehicle list are generated from this content, so they update automatically.
+### Admin panel (demo)
+
+A built-in admin lives at `/admin/` (`admin/index.html` → `src/admin/`). See [ADMIN.md](ADMIN.md) for login and usage.
+
+**It is a demo with no backend.** Edits are validated against `schema.ts` and saved in the browser's localStorage (`src/content/store.ts`), layered over the published JSON. Only that browser sees them, and the public site is unchanged. The login (`src/admin/auth.ts`) is a client-side placeholder, not security. The admin can export the full content as JSON. To move to a real database later, replace the read/save functions in `src/content/store.ts` with API calls returning the same `ContentBundle` shape, and replace `auth.ts` with real authentication.
 
 ### Content safety check
 
-`src/content/schema.ts` defines the shape of every content file and is the single source of truth: the app's TypeScript types are inferred from it, and `npm run validate` (`scripts/validate-content.ts`) checks the JSON against it, plus image paths, duplicate IDs and cross-file rules. It runs in the deploy workflow before building, so a bad edit stops the deploy and the live site stays on the previous version. When adding a field, update `schema.ts` **and** `public/admin/config.yml`.
+`src/content/schema.ts` (zod) is the single source of truth: the app's types are inferred from it, the admin validates edits with it, and `npm run validate` (`scripts/validate-content.ts`) checks the JSON files against it before every build and deploy, together with the shared rules in `src/content/rules.ts` (duplicate IDs, a hero slide must exist, tariff cards need a tab…). When adding a field, update `schema.ts` **and** the admin form in `src/admin/sections.tsx`. zod is only loaded by the admin page, never by the public site.
 
 ### Customer reviews
 
@@ -47,7 +51,7 @@ Vehicles, tours, tariff cards, offers and destinations each have a **Hide from w
 
 ### Photos
 
-Landmark and vehicle photos come from Wikimedia Commons under Creative Commons licences. The licences require the attribution shown in the footer's **Photo Credits** dialog. Photos uploaded through the admin are converted to WebP and stored in `public/images/`. If you replace a stock photo with your own, remove its credit.
+Landmark and vehicle photos come from Wikimedia Commons under Creative Commons licences. The licences require the attribution shown in the footer's **Photo Credits** dialog. To publish your own photos, add them to `public/images/` and reference them from the JSON files (photos uploaded in the demo admin stay in that browser only). If you replace a stock photo with your own, remove its credit.
 
 ### Owner notes
 
@@ -58,8 +62,9 @@ Hints like "Editable in Admin › Fleet" appear only in `npm run dev`. Customers
 ```
 src/
   App.tsx                 Page layout: section order and modal state
-  content/                Editable content (JSON) + schema.ts
-  data/                   Typed loaders over content/ (filters hidden items, section settings)
+  content/                Content JSON, schema.ts (zod), rules.ts, store.ts (demo edits layer)
+  data/                   Typed loaders over the content store (filter hidden items, section settings)
+  admin/                  Demo admin panel (forms, list editor, image upload, sign-in)
   types/                  TypeScript types (content types inferred from content/schema.ts)
   utils/
     enquiry.ts            WhatsApp / email / phone / directions links and message builder
@@ -75,9 +80,9 @@ src/
                           Reveal (scroll animation), CountUp, KonarkWheel, TempleBorder
 scripts/
   validate-content.ts     Content check run before every build/deploy
+admin/index.html          Admin page entry (built alongside index.html)
 public/
-  admin/                  Sveltia CMS admin panel (index.html + config.yml)
-  images/                 Photos (odisha/, vehicles/, and admin uploads)
+  images/                 Photos (odisha/, vehicles/)
   robots.txt, sitemap.xml, favicon.svg
 ```
 

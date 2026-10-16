@@ -1,8 +1,6 @@
-// Content is edited in the admin panel (/admin) or directly in src/content/vehicles.json.
-// It is checked against src/content/schema.ts by `npm run validate` before
-// every build, which is why the casts below are safe.
-import type { Vehicle } from '../types';
-import vehicles from '../content/vehicles.json';
+// Content comes from src/content/ (published JSON) plus any demo edits made
+// in the admin panel in this browser (see src/content/store.ts).
+import { content } from '../content/store';
 
 /** Vehicles shown on the site (entries marked hidden are left out). */
-export const vehiclesData = (vehicles as unknown as Vehicle[]).filter((v) => !v.hidden);
+export const vehiclesData = content.vehicles.filter((v) => !v.hidden);

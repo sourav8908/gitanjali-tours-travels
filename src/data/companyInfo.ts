@@ -1,7 +1,5 @@
-// Content is edited in the admin panel (/admin) or directly in src/content/company.json.
-// It is checked against src/content/schema.ts by `npm run validate` before
-// every build, which is why the casts below are safe.
-import type { CompanyInfo } from '../types';
-import company from '../content/company.json';
+// Content comes from src/content/ (published JSON) plus any demo edits made
+// in the admin panel in this browser (see src/content/store.ts).
+import { content } from '../content/store';
 
-export const companyInfo = company as unknown as CompanyInfo;
+export const companyInfo = content.company;

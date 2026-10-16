@@ -1,8 +1,6 @@
-// Content is edited in the admin panel (/admin) or directly in src/content/offers.json.
-// It is checked against src/content/schema.ts by `npm run validate` before
-// every build, which is why the casts below are safe.
-import type { SpecialOffer } from '../types';
-import offers from '../content/offers.json';
+// Content comes from src/content/ (published JSON) plus any demo edits made
+// in the admin panel in this browser (see src/content/store.ts).
+import { content } from '../content/store';
 
 /** Offers shown on the site (entries marked hidden are left out). */
-export const offersData = (offers as unknown as SpecialOffer[]).filter((o) => !o.hidden);
+export const offersData = content.offers.filter((o) => !o.hidden);

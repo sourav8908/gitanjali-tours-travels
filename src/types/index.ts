@@ -14,6 +14,7 @@ import type {
   vehicleCategories,
   tourCategories,
   pricingCategoryKeys,
+  contentSchemas,
 } from '../content/schema';
 
 // Content types are inferred from src/content/schema.ts (type-only imports,
@@ -37,6 +38,10 @@ export type FareRate = FareRatesContent['rates'][number];
 export type LocationsContent = z.infer<typeof locationsSchema>;
 export type RouteCoordinate = LocationsContent['locations'][number];
 export type PhotoCredit = z.infer<typeof photoCreditSchema>;
+
+/** All editable content, keyed by section (see src/content/schema.ts). */
+export type ContentKey = keyof typeof contentSchemas;
+export type ContentBundle = { [K in ContentKey]: z.infer<(typeof contentSchemas)[K]> };
 
 // ------------------------------------------------------- App-only types
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { FloatingBar } from './components/layout/FloatingBar';
+import { DemoEditsPill } from './components/layout/DemoEditsPill';
 import { Hero } from './components/home/Hero';
 import { BrandTrust } from './components/home/BrandTrust';
 import { AboutSection } from './components/home/AboutSection';
@@ -52,6 +53,7 @@ export const App: React.FC = () => {
 
       {/* Quick Action Floating Controls */}
       <FloatingBar />
+      <DemoEditsPill />
 
       {/* Modals */}
       <VehicleModal vehicle={selectedVehicle} onClose={() => setSelectedVehicle(null)} />

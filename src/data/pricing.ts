@@ -1,10 +1,8 @@
-// Content is edited in the admin panel (/admin) or directly in src/content/pricing.json.
-// It is checked against src/content/schema.ts by `npm run validate` before
-// every build, which is why the casts below are safe.
-import type { PricingContent } from '../types';
-import pricing from '../content/pricing.json';
+// Content comes from src/content/ (published JSON) plus any demo edits made
+// in the admin panel in this browser (see src/content/store.ts).
+import { content as store } from '../content/store';
 
-const content = pricing as unknown as PricingContent;
+const content = store.pricing;
 
 /** Tariff cards shown on the site (entries marked hidden are left out). */
 export const pricingData = content.plans.filter((p) => !p.hidden);
