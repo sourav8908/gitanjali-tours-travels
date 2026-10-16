@@ -37,7 +37,7 @@ export const PricingTable: React.FC = () => {
           <FilterPills options={tabOptions} active={activeTab} onChange={setActiveTab} />
         </div>
 
-        <Notice title="Reference Tariff" editHint="src/data/pricing.ts">
+        <Notice title="Reference Tariff" editHint="Admin › Rates">
           The rates shown below are standard baseline tariffs. Seasonal variations or custom multi-day packages may apply.
         </Notice>
 

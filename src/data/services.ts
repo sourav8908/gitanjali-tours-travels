@@ -1,13 +1,7 @@
-/**
- * Services offered by the agency. Shown in the footer and used as the
- * "Service Requirement" options in the contact form.
- */
+// Content is edited in the admin panel (/admin) or directly in src/content/services.json.
+// It is checked against src/content/schema.ts by `npm run validate` before
+// every build, which is why the casts below are safe.
+import content from '../content/services.json';
 
-export const services: string[] = [
-  'Odisha Golden Triangle (Puri-Konark-Bhubaneswar)',
-  'Puri Jagannath Dham & Sea Beach Trip',
-  'Chilika Lake & Dolphin Excursion',
-  'Biju Patnaik Airport (BBI) Pickup / Drop',
-  'Bhubaneswar Local City Rental (8h/80km)',
-  'Outstation Interstate Journey',
-];
+/** Services shown in the footer and offered in the contact form. */
+export const services: string[] = content;

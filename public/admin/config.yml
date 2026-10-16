@@ -1,0 +1,377 @@
+# Admin panel for Gitanjali Tours & Travels (Sveltia CMS)
+#
+# Every Save commits the change to GitHub; the deploy workflow then checks the
+# content (npm run validate) and publishes the site in about 1–2 minutes.
+# Field names must match src/content/schema.ts.
+
+backend:
+  name: github
+  repo: sourav8908/gitanjali-tours-travels
+  branch: main
+
+site_url: https://sourav8908.github.io/gitanjali-tours-travels/
+display_url: https://sourav8908.github.io/gitanjali-tours-travels/
+logo:
+  src: https://sourav8908.github.io/gitanjali-tours-travels/favicon.svg
+
+# Uploaded photos go to public/images/ and are converted to WebP automatically
+media_folder: /public/images
+public_folder: /images
+media_libraries:
+  all:
+    max_file_size: 15000000
+    transformations:
+      raster_image:
+        format: webp
+        quality: 80
+        width: 1920
+        height: 1920
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  # ---------------------------------------------------------------- Settings
+  - name: settings
+    label: Site Settings
+    icon: settings
+    files:
+      - name: sections
+        label: Page Sections (show / hide)
+        file: src/content/settings.json
+        fields:
+          - name: sections
+            label: Sections
+            widget: object
+            hint: Switched-off sections disappear from the page and the menu. The hero, trust strip and contact section are always shown.
+            fields:
+              - { name: about, label: About Us, widget: boolean }
+              - { name: destinations, label: Popular Destinations, widget: boolean }
+              - { name: vehicles, label: Our Fleet, widget: boolean }
+              - { name: tours, label: Tour Packages, widget: boolean }
+              - { name: calculator, label: Distance & Fare Calculator, widget: boolean }
+              - { name: pricing, label: Rental Tariffs, widget: boolean }
+              - { name: offers, label: Special Offers, widget: boolean }
+              - { name: reviews, label: Customer Reviews, widget: boolean, hint: Only appears once at least one genuine review exists. }
+
+      - name: company
+        label: Business Details
+        file: src/content/company.json
+        fields:
+          - { name: name, label: Business name, widget: string }
+          - { name: tagline, label: Hero headline, widget: string, hint: 'Text after the first comma is shown in gold, e.g. "Your Journey, Our Responsibility."' }
+          - { name: supportingText, label: Hero sub-text, widget: text }
+          - { name: brandSignature, label: Brand signature, widget: string }
+          - { name: vehicleNumber, label: Logo badge number, widget: string, hint: 'Shown in the square logo, e.g. 5602.' }
+          - { name: hubLocation, label: Location under the logo, widget: string }
+          - { name: phone, label: Phone (for dialling), widget: string, hint: 'Digits with country code, no spaces, e.g. +919876543210' }
+          - { name: phoneDisplay, label: Phone (as shown), widget: string, hint: 'e.g. +91 98765 43210' }
+          - { name: whatsapp, label: WhatsApp number, widget: string, hint: 'Country code + number, digits only, no "+", e.g. 919876543210' }
+          - { name: whatsappDisplay, label: WhatsApp (as shown), widget: string }
+          - { name: email, label: Email, widget: string }
+          - name: address
+            label: Office address
+            widget: object
+            fields:
+              - { name: area, label: Area, widget: string }
+              - { name: city, label: City, widget: string }
+              - { name: state, label: State, widget: string }
+              - { name: pincode, label: PIN code, widget: string, pattern: ['^\d{6}$', 'Must be a 6-digit PIN code'] }
+              - { name: full, label: Full address (as shown), widget: text, hint: Also used for the Get Directions button. }
+              - { name: landmark, label: Landmark, widget: string, required: false }
+          - { name: businessHours, label: Business hours, widget: string }
+          - { name: googleReviewsUrl, label: Google reviews link, widget: string, required: false, hint: Adds an "All Google Reviews" button to the reviews section. }
+          - name: socialLinks
+            label: Social media
+            widget: object
+            hint: Leave empty to hide an icon.
+            fields:
+              - { name: facebook, label: Facebook page URL, widget: string, required: false }
+              - { name: instagram, label: Instagram profile URL, widget: string, required: false }
+              - { name: whatsapp, label: WhatsApp link, widget: string, required: false }
+
+      - name: services
+        label: Services List
+        file: src/content/services.json
+        fields:
+          - name: services
+            label: Services
+            label_singular: Service
+            widget: list
+            root: true
+            hint: Shown in the footer and as choices in the contact form.
+            field: { name: service, label: Service, widget: string }
+
+  # ------------------------------------------------------------------- Fleet
+  - name: fleet
+    label: Fleet
+    icon: directions_car
+    files:
+      - name: vehicles
+        label: Vehicles
+        file: src/content/vehicles.json
+        fields:
+          - name: vehicles
+            label: Vehicles
+            label_singular: Vehicle
+            widget: list
+            root: true
+            collapsed: true
+            summary: '{{fields.fullName}} · {{fields.rentalStartingPrice}} {{fields.pricingUnit}}'
+            hint: Drag to reorder. The order here is the order on the website.
+            fields:
+              - &id
+                name: id
+                label: ID
+                widget: uuid
+                hint: Generated automatically. Don't change it.
+              - &hidden
+                name: hidden
+                label: Hide from website
+                widget: boolean
+                required: false
+                default: false
+                hint: Turn on to hide this item without deleting it.
+              - { name: fullName, label: Full name, widget: string, hint: 'e.g. Toyota Innova Crysta' }
+              - { name: brand, label: Brand, widget: string }
+              - { name: model, label: Model (card title), widget: string }
+              - { name: category, label: Category, widget: select, options: [Sedan, SUV, MPV, Hatchback / Compact, Tourist Van] }
+              - { name: image, label: Photo, widget: image, hint: Landscape photos work best. Uploads are converted to WebP automatically. }
+              - { name: rentalStartingPrice, label: Starting price, widget: string, hint: 'e.g. ₹19 (the number is also used by the budget filter)' }
+              - { name: pricingUnit, label: Price unit, widget: string, default: per km }
+              - { name: seatingCapacity, label: Seats, widget: number, value_type: int, min: 1, max: 60 }
+              - { name: isAc, label: Air conditioned, widget: boolean, default: true }
+              - { name: fuelType, label: Fuel, widget: string, required: false, hint: 'e.g. Diesel or Petrol / CNG' }
+              - { name: luggageCapacity, label: Luggage, widget: string }
+              - { name: isAvailable, label: Available now, widget: boolean, default: true, hint: Off shows "On request" instead of "Available". }
+              - { name: isSignature5602, label: 5602 Signature vehicle, widget: boolean, required: false, default: false }
+              - { name: description, label: Description, widget: text }
+              - { name: bestFor, label: Best for, widget: string }
+              - { name: features, label: Features, label_singular: Feature, widget: list, field: { name: feature, label: Feature, widget: string } }
+
+  # ------------------------------------------------------------------- Tours
+  - name: tours
+    label: Tour Packages
+    icon: map
+    files:
+      - name: tours
+        label: Tour Packages
+        file: src/content/tours.json
+        fields:
+          - name: tours
+            label: Tours
+            label_singular: Tour
+            widget: list
+            root: true
+            collapsed: true
+            summary: '{{fields.title}} · {{fields.startingPrice}}'
+            hint: Drag to reorder.
+            fields:
+              - *id
+              - *hidden
+              - { name: title, label: Title, widget: string }
+              - { name: category, label: Category, widget: select, options: [Odisha Golden Triangle, Coastal & Nature, Heritage & Temples, Outstation Travel, Custom] }
+              - { name: region, label: Region, widget: select, options: [Odisha, Outstation] }
+              - { name: image, label: Photo, widget: image }
+              - { name: route, label: Route, widget: string, hint: 'e.g. Bhubaneswar → Konark → Puri' }
+              - { name: duration, label: Duration, widget: string, hint: 'e.g. 2 Days / 1 Night' }
+              - { name: startingPrice, label: Starting price, widget: string, hint: 'e.g. ₹5,800' }
+              - { name: priceNote, label: Price note, widget: string }
+              - { name: description, label: Description, widget: text }
+              - { name: highlights, label: Highlights, label_singular: Highlight, widget: list, field: { name: highlight, label: Highlight, widget: string } }
+              - { name: inclusions, label: Inclusions, label_singular: Inclusion, widget: list, field: { name: inclusion, label: Inclusion, widget: string } }
+
+  # ------------------------------------------------------------------- Rates
+  - name: pricing
+    label: Rates
+    icon: currency_rupee
+    files:
+      - name: pricing
+        label: Rental Tariffs
+        file: src/content/pricing.json
+        fields:
+          - name: tabs
+            label: Tabs
+            label_singular: Tab
+            widget: list
+            hint: The buttons above the tariff cards. Each card is shown under the tab with the same category.
+            fields:
+              - { name: key, label: Category, widget: select, options: [{ label: Outstation / per km, value: per-km }, { label: Puri & Konark day trip, value: puri-konark }, { label: Bhubaneswar local, value: bhubaneswar-local }, { label: Airport transfer, value: airport }] }
+              - { name: label, label: Button text, widget: string }
+          - name: plans
+            label: Tariff cards
+            label_singular: Tariff card
+            widget: list
+            collapsed: true
+            summary: '{{fields.vehicleCategory}} · {{fields.basePrice}} {{fields.unit}}'
+            fields:
+              - *id
+              - *hidden
+              - { name: categoryKey, label: Tab, widget: select, options: [{ label: Outstation / per km, value: per-km }, { label: Puri & Konark day trip, value: puri-konark }, { label: Bhubaneswar local, value: bhubaneswar-local }, { label: Airport transfer, value: airport }] }
+              - { name: categoryName, label: Card heading, widget: string }
+              - { name: vehicleCategory, label: Vehicle type, widget: string, hint: 'e.g. Executive Sedan (4-Seater)' }
+              - { name: vehicleModelExample, label: Example model, widget: string }
+              - { name: basePrice, label: Price, widget: string, hint: 'e.g. ₹14 or ₹2,600' }
+              - { name: unit, label: Price unit, widget: string, hint: 'e.g. per km' }
+              - { name: additionalCharges, label: Allowances & notes, widget: text }
+              - { name: terms, label: Terms, label_singular: Term, widget: list, field: { name: term, label: Term, widget: string } }
+
+  # ------------------------------------------------------------------ Offers
+  - name: offers
+    label: Offers
+    icon: local_offer
+    files:
+      - name: offers
+        label: Special Offers
+        file: src/content/offers.json
+        fields:
+          - name: offers
+            label: Offers
+            label_singular: Offer
+            widget: list
+            root: true
+            collapsed: true
+            summary: '{{fields.title}}'
+            hint: Keep offers honest, with no fake urgency or invented discounts.
+            fields:
+              - *id
+              - *hidden
+              - { name: title, label: Title, widget: string }
+              - { name: subtitle, label: Subtitle, widget: string, required: false }
+              - { name: badge, label: Badge, widget: string, hint: 'Short label, e.g. Popular Route' }
+              - { name: discount, label: Offer, widget: string, hint: 'e.g. 5% OFF base tariff' }
+              - { name: description, label: Description, widget: text }
+              - { name: validity, label: Validity, widget: string }
+              - { name: terms, label: Terms, widget: text }
+
+  # ------------------------------------------------------------ Destinations
+  - name: destinations
+    label: Destinations
+    icon: landscape
+    files:
+      - name: destinations
+        label: Popular Destinations
+        file: src/content/destinations.json
+        fields:
+          - name: destinations
+            label: Destinations
+            label_singular: Destination
+            widget: list
+            root: true
+            collapsed: true
+            summary: '{{fields.name}}'
+            hint: The first one is shown large. At least one must be in the hero slideshow.
+            fields:
+              - *id
+              - *hidden
+              - { name: name, label: Name, widget: string }
+              - { name: tagline, label: Tagline, widget: string }
+              - { name: description, label: Description, widget: text }
+              - { name: image, label: Photo, widget: image }
+              - { name: inHeroSlideshow, label: Show in hero slideshow, widget: boolean, default: false }
+              - { name: heroImage, label: Hero photo (optional), widget: image, required: false, hint: 'A wide, high-resolution photo for the full-screen slideshow. Leave empty to use the main photo.' }
+              - { name: distanceFromHub, label: Distance from Bhubaneswar, widget: string, hint: 'e.g. ~65 km' }
+
+  # ----------------------------------------------------------------- Reviews
+  - name: reviews
+    label: Reviews
+    icon: reviews
+    files:
+      - name: testimonials
+        label: Customer Reviews
+        file: src/content/testimonials.json
+        fields:
+          - name: testimonials
+            label: Reviews
+            label_singular: Review
+            widget: list
+            root: true
+            collapsed: true
+            summary: '{{fields.name}} · {{fields.rating}}★'
+            hint: Only add genuine reviews you have the customer's permission to publish, for example from your Google reviews. Invented reviews are illegal.
+            fields:
+              - *id
+              - name: isDemoData
+                label: Sample review (not shown on the live site)
+                widget: boolean
+                default: false
+                hint: Leave OFF for real reviews. Samples only appear while developing.
+              - { name: name, label: Customer name, widget: string }
+              - { name: location, label: City, widget: string }
+              - { name: rating, label: Stars, widget: number, value_type: int, min: 1, max: 5, default: 5 }
+              - { name: trip, label: Trip, widget: string, hint: 'e.g. Puri & Konark Day Trip' }
+              - { name: quote, label: Review text, widget: text }
+
+  # -------------------------------------------------------------- Calculator
+  - name: calculator
+    label: Distance Calculator
+    icon: route
+    files:
+      - name: fareRates
+        label: Fare Rates
+        file: src/content/fare-rates.json
+        fields:
+          - name: rates
+            label: Vehicle rates
+            label_singular: Rate
+            widget: list
+            summary: '{{fields.modelExample}} · ₹{{fields.ratePerKm}}/km'
+            hint: Keep these in step with the per-km cards under Rates. Estimated fare = max(distance, minimum km) × rate, plus the long-trip allowance on long journeys.
+            fields:
+              - { name: category, label: Category name, widget: string }
+              - { name: vehicleName, label: Vehicle type, widget: string }
+              - { name: modelExample, label: Example model (shown), widget: string }
+              - { name: ratePerKm, label: Rate per km (₹), widget: number, value_type: int, min: 1 }
+              - { name: minBillableKm, label: Minimum billed km, widget: number, value_type: int, min: 0 }
+              - { name: longTripAllowance, label: Long-trip driver allowance (₹), widget: number, value_type: int, min: 0 }
+          - { name: longTripThresholdKm, label: Long trip starts above (km), widget: number, value_type: int, min: 1 }
+          - { name: defaultCategory, label: Pre-selected category, widget: string, hint: Must match one of the category names above. }
+
+      - name: locations
+        label: Pickup & Drop Locations
+        file: src/content/locations.json
+        fields:
+          - name: locations
+            label: Locations
+            label_singular: Location
+            widget: list
+            collapsed: true
+            summary: '{{fields.name}}'
+            hint: 'The 1st location is the default pickup and the 3rd is the default destination. Find coordinates by right-clicking a place in Google Maps.'
+            fields:
+              - { name: name, label: Name, widget: string }
+              - { name: lat, label: Latitude, widget: number, value_type: float, min: -90, max: 90 }
+              - { name: lng, label: Longitude, widget: number, value_type: float, min: -180, max: 180 }
+              - { name: category, label: Group, widget: select, required: false, options: [Odisha Core, Coastal, Heritage, Outstation] }
+          - name: mapCenter
+            label: Map centre
+            widget: object
+            fields:
+              - { name: lat, label: Latitude, widget: number, value_type: float }
+              - { name: lng, label: Longitude, widget: number, value_type: float }
+
+  # ----------------------------------------------------------- Photo credits
+  - name: credits
+    label: Photo Credits
+    icon: copyright
+    files:
+      - name: photoCredits
+        label: Photo Credits
+        file: src/content/photo-credits.json
+        fields:
+          - name: credits
+            label: Credits
+            label_singular: Credit
+            widget: list
+            root: true
+            collapsed: true
+            summary: '{{fields.subject}} · {{fields.author}}'
+            hint: Needed for Creative Commons photos. Your own photos need no credit; remove a credit when you replace its photo.
+            fields:
+              - { name: image, label: Photo, widget: image }
+              - { name: subject, label: What it shows, widget: string }
+              - { name: author, label: Author, widget: string }
+              - { name: license, label: Licence, widget: string, hint: 'e.g. CC BY-SA 4.0' }
+              - { name: licenseUrl, label: Licence link, widget: string, required: false }
+              - { name: sourceUrl, label: Source page, widget: string }

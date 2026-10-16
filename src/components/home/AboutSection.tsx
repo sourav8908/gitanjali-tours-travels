@@ -99,7 +99,7 @@ export const AboutSection: React.FC = () => {
             {import.meta.env.DEV && (
             <div className="p-3 bg-amber-50/70 border border-amber-200/80 rounded-brand text-[11px] text-amber-900 flex items-center gap-2">
               <span className="font-semibold uppercase tracking-wider text-amber-800 shrink-0">Note for Agency:</span>
-              <span>All company details and contact information can be updated in <code className="bg-amber-100/80 px-1 py-0.5 rounded font-mono text-amber-950">src/data/companyInfo.ts</code>.</span>
+              <span>All company details and contact information can be updated in <code className="bg-amber-100/80 px-1 py-0.5 rounded font-mono text-amber-950">Admin › Site Settings › Business Details</code>.</span>
             </div>
             )}
 

@@ -1,52 +1,17 @@
-import type { FareRate } from '../types';
+// Content is edited in the admin panel (/admin) or directly in src/content/fare-rates.json.
+// It is checked against src/content/schema.ts by `npm run validate` before
+// every build, which is why the casts below are safe.
+import type { FareRatesContent } from '../types';
+import content from '../content/fare-rates.json';
+
+const fares = content as unknown as FareRatesContent;
 
 /**
- * =========================================================================
- * DISTANCE CALCULATOR — ESTIMATED FARE RATES
- * =========================================================================
- * Rates used to estimate fares on the interactive map. Keep these in step
- * with the per-km plans in `pricing.ts`.
- *
  * Estimated fare = max(distance, minBillableKm) × ratePerKm
  *                  + longTripAllowance (only when distance > LONG_TRIP_THRESHOLD_KM)
  */
-
-export const LONG_TRIP_THRESHOLD_KM = 150;
-
-export const fareRates: FareRate[] = [
-  {
-    category: 'Sedan',
-    vehicleName: 'Executive Sedan',
-    modelExample: 'Maruti Suzuki Dzire',
-    ratePerKm: 14,
-    minBillableKm: 40,
-    longTripAllowance: 350
-  },
-  {
-    category: 'MPV',
-    vehicleName: 'Family MPV',
-    modelExample: 'Maruti Suzuki Ertiga',
-    ratePerKm: 16,
-    minBillableKm: 50,
-    longTripAllowance: 350
-  },
-  {
-    category: 'Premium MPV',
-    vehicleName: 'Premium Highway MPV',
-    modelExample: 'Toyota Innova Crysta (5602 Signature)',
-    ratePerKm: 19,
-    minBillableKm: 50,
-    longTripAllowance: 400
-  },
-  {
-    category: 'Tourist Van',
-    vehicleName: '12/17-Seater Tourist Van',
-    modelExample: 'Force Tempo Traveller',
-    ratePerKm: 26,
-    minBillableKm: 80,
-    longTripAllowance: 500
-  }
-];
+export const fareRates = fares.rates;
+export const LONG_TRIP_THRESHOLD_KM = fares.longTripThresholdKm;
 
 /** Fare card highlighted by default in the calculator. */
-export const DEFAULT_FARE_CATEGORY = 'Premium MPV';
+export const DEFAULT_FARE_CATEGORY = fares.defaultCategory;

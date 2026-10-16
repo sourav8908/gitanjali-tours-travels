@@ -88,7 +88,7 @@ export const FleetShowcase: React.FC<FleetShowcaseProps> = ({ onSelectVehicle })
           </div>
         </div>
 
-        <Notice title="Indicative Tariffs" tone="info" editHint="src/data/vehicles.ts">
+        <Notice title="Indicative Tariffs" tone="info" editHint="Admin › Fleet">
           Starting rates are for reference. Your exact vehicle and fare are confirmed when you enquire.
         </Notice>
 

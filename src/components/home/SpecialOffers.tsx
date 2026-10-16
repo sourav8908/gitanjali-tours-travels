@@ -16,7 +16,7 @@ export const SpecialOffers: React.FC = () => {
           description="Explore seasonal travel savings, early bird booking benefits, and custom rates for group events."
         />
 
-        <Notice title="Promotional Notice" tone="info" editHint="src/data/offers.ts">
+        <Notice title="Promotional Notice" tone="info" editHint="Admin › Offers">
           Promotional packages are subject to advance booking terms.
         </Notice>
 
@@ -39,6 +39,9 @@ export const SpecialOffers: React.FC = () => {
                 <h3 className="text-lg font-bold font-display text-brand-navy mb-1">
                   {offer.title}
                 </h3>
+                {offer.subtitle && (
+                  <p className="text-xs text-slate-500 mb-1">{offer.subtitle}</p>
+                )}
                 <p className="text-xs font-semibold text-brand-ocean mb-3">
                   {offer.discount}
                 </p>

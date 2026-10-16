@@ -41,7 +41,7 @@ export const TourPackages: React.FC<TourPackagesProps> = ({ onSelectTour }) => {
           <FilterPills options={categoryOptions} active={selectedCategory} onChange={setSelectedCategory} />
         </div>
 
-        <Notice title="Customizable Itineraries" editHint="src/data/tours.ts">
+        <Notice title="Customizable Itineraries" editHint="Admin › Tour Packages">
           Packages below are sample plans. We adjust timings, stops, and vehicle size to suit your family.
         </Notice>
 

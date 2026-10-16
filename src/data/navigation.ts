@@ -1,4 +1,5 @@
 import type { NavLink } from '../types';
+import { isSectionOn } from './settings';
 
 /**
  * Site navigation. `navLinks` drives the header menu (the logo links home);
@@ -6,7 +7,7 @@ import type { NavLink } from '../types';
  * section id on the page.
  */
 
-export const navLinks: NavLink[] = [
+const allNavLinks: NavLink[] = [
   { label: 'About', href: '#about' },
   { label: 'Destinations', href: '#destinations' },
   { label: 'Fleet', href: '#vehicles' },
@@ -17,7 +18,7 @@ export const navLinks: NavLink[] = [
   { label: 'Contact', href: '#contact' },
 ];
 
-export const footerNavLinks: NavLink[] = [
+const allFooterNavLinks: NavLink[] = [
   { label: 'Home', href: '#' },
   { label: 'About Us', href: '#about' },
   { label: 'Odisha Destinations', href: '#destinations' },
@@ -28,3 +29,8 @@ export const footerNavLinks: NavLink[] = [
   { label: 'Special Offers', href: '#offers' },
   { label: 'Contact', href: '#contact' },
 ];
+
+const visible = (link: NavLink) => isSectionOn(link.href.replace('#', ''));
+
+export const navLinks = allNavLinks.filter(visible);
+export const footerNavLinks = allFooterNavLinks.filter(visible);

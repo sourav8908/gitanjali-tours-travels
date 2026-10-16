@@ -1,0 +1,76 @@
+[
+  {
+    "id": "konark",
+    "name": "Konark Sun Temple",
+    "tagline": "UNESCO World Heritage Site",
+    "description": "The 13th-century stone chariot of the Sun God, carved with 24 giant wheels, near Chandrabhaga Beach.",
+    "image": "/images/odisha/konark-dusk.webp",
+    "heroImage": "/images/odisha/konark-sun-temple.webp",
+    "distanceFromHub": "~65 km",
+    "inHeroSlideshow": true
+  },
+  {
+    "id": "puri-jagannath",
+    "name": "Shree Jagannath Temple",
+    "tagline": "Puri · Char Dham",
+    "description": "One of India’s holiest pilgrimages and home of the world-famous Rath Yatra.",
+    "image": "/images/odisha/jagannath-temple-puri.webp",
+    "distanceFromHub": "~60 km",
+    "inHeroSlideshow": true
+  },
+  {
+    "id": "lingaraj",
+    "name": "Lingaraj Temple",
+    "tagline": "Bhubaneswar · Temple City",
+    "description": "The grandest of Bhubaneswar’s 11th-century Kalinga-style temples, in the heart of the old town.",
+    "image": "/images/odisha/lingaraj-temple.webp",
+    "distanceFromHub": "In the city",
+    "inHeroSlideshow": true
+  },
+  {
+    "id": "chilika",
+    "name": "Chilika Lake",
+    "tagline": "Asia’s largest brackish lagoon",
+    "description": "Boat rides to spot Irrawaddy dolphins, island temples, migratory birds, and golden sunsets.",
+    "image": "/images/odisha/chilika-flamingos.webp",
+    "heroImage": "/images/odisha/chilika-lake.webp",
+    "distanceFromHub": "~100 km",
+    "inHeroSlideshow": true
+  },
+  {
+    "id": "puri-beach",
+    "name": "Puri Sea Beach",
+    "tagline": "Sunrise on the Bay of Bengal",
+    "description": "Golden sand, sunrise walks, and the scenic Puri–Konark Marine Drive.",
+    "image": "/images/odisha/puri-beach-sunrise.webp",
+    "distanceFromHub": "~60 km",
+    "inHeroSlideshow": true
+  },
+  {
+    "id": "dhauli",
+    "name": "Dhauli Shanti Stupa",
+    "tagline": "Peace Pagoda on the Daya river",
+    "description": "The white hilltop stupa marking the Kalinga War site where Emperor Ashoka embraced peace.",
+    "image": "/images/odisha/dhauli-shanti-stupa.webp",
+    "distanceFromHub": "~8 km",
+    "inHeroSlideshow": true
+  },
+  {
+    "id": "bhitarkanika",
+    "name": "Bhitarkanika National Park",
+    "tagline": "Mangroves & saltwater crocodiles",
+    "description": "Boat safaris through India’s second-largest mangrove forest, home to giant saltwater crocodiles, spotted deer, and migratory birds.",
+    "image": "/images/odisha/bhitarkanika-crocodile.webp",
+    "distanceFromHub": "~170 km",
+    "inHeroSlideshow": false
+  },
+  {
+    "id": "similipal",
+    "name": "Similipal Tiger Reserve",
+    "tagline": "Home of the rare black tiger",
+    "description": "Dense sal forests, the Barehipani and Joranda waterfalls, and the only wild melanistic tigers in the world.",
+    "image": "/images/odisha/similipal-black-tiger.webp",
+    "distanceFromHub": "~250 km",
+    "inHeroSlideshow": false
+  }
+]

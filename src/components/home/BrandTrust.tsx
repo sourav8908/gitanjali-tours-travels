@@ -14,7 +14,7 @@ const stats = [
   { icon: Map, value: toursData.length, suffix: '', label: 'Tour packages', note: 'Odisha & outstation' },
   { icon: Landmark, value: destinations.length, suffix: '+', label: 'Landmarks covered', note: 'Temples, beaches, lakes' },
   { icon: Clock, value: 24, suffix: '/7', label: 'Outstation support', note: `${popularLocations.length} routes priced online` },
-];
+].filter((stat) => stat.value > 0);
 
 export const BrandTrust: React.FC = () => {
   return (

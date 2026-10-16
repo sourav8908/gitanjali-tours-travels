@@ -18,6 +18,7 @@ import { TourModal } from './components/modals/TourModal';
 import { LegalModal } from './components/modals/LegalModal';
 import { PhotoCreditsModal } from './components/modals/PhotoCreditsModal';
 import { TempleBorder } from './components/ui/TempleBorder';
+import { isSectionOn } from './data/settings';
 import type { Vehicle, TourPackage, LegalDocType } from './types';
 
 export const App: React.FC = () => {
@@ -35,14 +36,14 @@ export const App: React.FC = () => {
         <Hero />
         <TempleBorder />
         <BrandTrust />
-        <AboutSection />
-        <Destinations />
-        <FleetShowcase onSelectVehicle={setSelectedVehicle} />
-        <TourPackages onSelectTour={setSelectedTour} />
-        <DistanceMap />
-        <PricingTable />
-        <SpecialOffers />
-        <Testimonials />
+        {isSectionOn('about') && <AboutSection />}
+        {isSectionOn('destinations') && <Destinations />}
+        {isSectionOn('vehicles') && <FleetShowcase onSelectVehicle={setSelectedVehicle} />}
+        {isSectionOn('tours') && <TourPackages onSelectTour={setSelectedTour} />}
+        {isSectionOn('calculator') && <DistanceMap />}
+        {isSectionOn('pricing') && <PricingTable />}
+        {isSectionOn('offers') && <SpecialOffers />}
+        {isSectionOn('reviews') && <Testimonials />}
         <ContactSection />
       </main>
 

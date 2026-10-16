@@ -1,0 +1,12 @@
+{
+  "sections": {
+    "about": true,
+    "destinations": true,
+    "vehicles": true,
+    "tours": true,
+    "calculator": true,
+    "pricing": true,
+    "offers": true,
+    "reviews": true
+  }
+}

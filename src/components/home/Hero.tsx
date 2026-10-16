@@ -3,6 +3,7 @@ import { ArrowRight, Phone, ShieldCheck, MapPin, BadgeIndianRupee } from 'lucide
 import { companyInfo } from '../../data/companyInfo';
 import { heroSlides } from '../../data/destinations';
 import { KonarkWheel } from '../ui/KonarkWheel';
+import { servicesHref } from '../../data/settings';
 import { asset } from '../../utils/asset';
 
 const SLIDE_INTERVAL_MS = 6000;
@@ -12,6 +13,11 @@ const trustPoints = [
   { icon: MapPin, title: 'Doorstep Pickup', text: 'Airport, station & home' },
   { icon: BadgeIndianRupee, title: 'Transparent ₹ Tariff', text: 'Upfront per-km rates' },
 ];
+
+// "Your Journey, Our Responsibility." → plain part + gold part after the first comma
+const commaAt = companyInfo.tagline.indexOf(',');
+const headlineStart = commaAt === -1 ? companyInfo.tagline : companyInfo.tagline.slice(0, commaAt + 1);
+const headlineHighlight = commaAt === -1 ? '' : companyInfo.tagline.slice(commaAt + 1).trim();
 
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -93,7 +99,7 @@ export const Hero: React.FC = () => {
               {companyInfo.name}
             </span>
             <span className="block text-4xl sm:text-5xl lg:text-6xl leading-[1.1]">
-              Your Journey, <span className="text-brand-gold italic">Our Responsibility.</span>
+              {headlineStart}{headlineHighlight && <> <span className="text-brand-gold italic">{headlineHighlight}</span></>}
             </span>
           </h1>
 
@@ -104,7 +110,7 @@ export const Hero: React.FC = () => {
           {/* Primary & Secondary CTAs */}
           <div className="animate-fadeUp [animation-delay:300ms] flex flex-col sm:flex-row gap-3 sm:gap-4 mb-14">
             <a
-              href="#destinations"
+              href={servicesHref}
               className="inline-flex items-center justify-center gap-2.5 px-7 py-4 text-sm font-semibold text-brand-navy bg-brand-gold hover:bg-brand-gold-dark rounded-brand shadow-lg shadow-black/20 transition-colors group"
             >
               <span>Explore Our Services</span>
