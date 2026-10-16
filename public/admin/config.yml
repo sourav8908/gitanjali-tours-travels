@@ -8,6 +8,10 @@ backend:
   name: github
   repo: sourav8908/gitanjali-tours-travels
   branch: main
+  # Token sign-in only. "Sign In with GitHub" (oauth) needs an OAuth login
+  # server (e.g. Sveltia CMS Authenticator on Cloudflare Workers) plus
+  # `base_url` set to it; add `oauth` here once that exists.
+  auth_methods: [token]
 
 site_url: https://sourav8908.github.io/gitanjali-tours-travels/
 display_url: https://sourav8908.github.io/gitanjali-tours-travels/
