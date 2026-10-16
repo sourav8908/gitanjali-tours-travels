@@ -1,0 +1,105 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    color-scheme: light;
+  }
+  
+  body {
+    @apply bg-brand-surface text-brand-text antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  h1, h2, h3, .font-display {
+    @apply tracking-tight;
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+
+  /* Accessible focus indicators */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-ocean;
+  }
+}
+
+/* Scroll reveal (see components/ui/Reveal.tsx) */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Temple-spire border strip inspired by Sambalpuri "phoda kumbha" weaving */
+.temple-border {
+  background-color: #0B1F33;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12' viewBox='0 0 24 12'%3E%3Cpath d='M0 12 L6 2 L12 12 Z' fill='%23D6A756'/%3E%3Cpath d='M12 12 L18 5 L24 12 Z' fill='%23A85A32'/%3E%3Ccircle cx='6' cy='1.5' r='1.2' fill='%23D6A756'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 24px 12px;
+  background-position: bottom left;
+}
+
+/* Hide the horizontal scrollbar on swipe carousels */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Custom Leaflet Map Fixes */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  z-index: 10;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F5F7FA;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

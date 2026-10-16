@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" rx="20" fill="#0B1F33"/>
+  <path d="M50 15 L78 75 L62 75 L50 48 L38 75 L22 75 Z" fill="#D6A756"/>
+  <circle cx="50" cy="32" r="6" fill="#FFFFFF"/>
+  <text x="50" y="90" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700" fill="#D6A756" text-anchor="middle" letter-spacing="1">5602</text>
+</svg>
